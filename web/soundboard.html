@@ -62,7 +62,7 @@
   <script>
     allVoices = null
     voices = null
-    items = []
+    items = localStorage.getItem("savedItems") ? JSON.parse(localStorage.getItem("savedItems")): [];
     editMode = false
 
     loadComponents("components.html")
@@ -98,9 +98,12 @@
         this.visible = true
       },
       onSave: function(data) {
-        if (this.item.isNew) items.push(data)
+        if (this.item.isNew){
+          items.push(data);
+        }
         else Object.assign(this.item, data, {audioUrl: null})
         this.visible = false
+        localStorage.setItem("savedItems", JSON.stringify(items))
       },
       onTest: function(data) {
         playItem(data)
@@ -109,6 +112,7 @@
 
     function deleteItem(item) {
       items.splice(items.indexOf(item), 1)
+      localStorage.setItem("savedItems", JSON.stringify(items));
     }
 
     function playItem(item) {
@@ -157,7 +161,7 @@
     bind-param-visible="#editItemDialog.visible"
     bind-param-error="#editItemDialog.error"
     bind-param-item="#editItemDialog.item"
-    bind-event-save-item="editItemDialog.onSave(event.data)"
+    bind-event-save-item="editItemDialog.onSave(event.data); console.log(event.data);"
     bind-event-test-item="editItemDialog.onTest(event.data)"></div>
 </body>
 </html>
