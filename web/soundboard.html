@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123643790-2"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'UA-123643790-2');
-  </script>
-
   <title>Soundboard - TTS Tool</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -63,12 +54,17 @@
     allVoices = null
     voices = null
     items = localStorage.getItem("savedItems") ? JSON.parse(localStorage.getItem("savedItems")): [];
-    editMode = false
+    currentLang = localStorage.getItem("currentLang") ?? false;
 
     loadComponents("components.html")
     new Promise(fulfill => $(window).on("load", fulfill))
       .then(() => getVoices(3))
       .then(result => allVoices = result.filter(x => x.lang))
+      .then(filterPreloaded => voices = currentLang ? filterVoicesByLanguage(allVoices, currentLang) : null)
+      .then(preloadVoices => items.forEach(element => {
+        element.voice = voices.find((voice) => voice.name == element.voice.name);
+        console.log(items);
+      }))
       .catch(err => alert(err.message))
 
 
@@ -87,7 +83,6 @@
       return voices.filter(x => x.lang.startsWith(lang + '-') || x.lang.startsWith(lang + '_'))
     }
 
-
     editItemDialog = {
       visible: false,
       error: null,
@@ -98,6 +93,8 @@
         this.visible = true
       },
       onSave: function(data) {
+        let id = Date.now();
+        data.id = id;
         if (this.item.isNew){
           items.push(data);
         }
@@ -135,18 +132,19 @@
     bind-param-active-page="'SOUNDBOARD'"
     bind-event-toggle-dark-mode="this.toggleDarkMode()"></div>
 
-  <div class="container mt-3" bind-repeater-if="#voices ? 0 : 1">
-    <select class="form-control"
+  <div class="container mt-3">
+    <select name="language" class="form-control"
       bind-var-languages="#allVoices && getLanguages(#allVoices)"
-      bind-event-change="voices = filterVoicesByLanguage(allVoices, thisElem.value)">
+      bind-event-change="voices = filterVoicesByLanguage(allVoices, thisElem.value); localStorage.setItem('currentLang', thisElem.value);">
       <option value="">Select Language</option>
       <option bind-repeater-i="#languages.length"
         bind-var-lang="#languages[#i]"
-        bind-statement-1="thisElem.value = #lang">{{langMap[#lang] || #lang}}</option>
+        bind-statement-1="thisElem.value = #lang"
+        bind-statement-2="if(#lang == currentLang) thisElem.selected = true">{{langMap[#lang] || #lang}}</option>
     </select>
   </div>
 
-  <div class="container mt-3" bind-repeater-if="#voices ? 1 : 0">
+  <div class="container mt-3" >
     <div bind-view="SoundboardItemList"
       bind-param-dark-mode="#darkMode"
       bind-param-items="#items"
@@ -161,7 +159,8 @@
     bind-param-visible="#editItemDialog.visible"
     bind-param-error="#editItemDialog.error"
     bind-param-item="#editItemDialog.item"
-    bind-event-save-item="editItemDialog.onSave(event.data); console.log(event.data);"
+    bind-event-save-item="editItemDialog.onSave(event.data);"
     bind-event-test-item="editItemDialog.onTest(event.data)"></div>
 </body>
+
 </html>

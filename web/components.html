@@ -52,6 +52,7 @@
                 bind-statement-1="thisElem.value = #i">{{voices[#i].name}}</option>
             </select>
           </div>
+          <input type="hidden" bind-statement-1="thisElem.value = (#item.isNew ? Date.now() : #item.id)">
           <div class="col-12">
             <textarea class="form-control" name="text" rows="3" placeholder="Enter text to be spoken"
               bind-statement-1="if (#visible) thisElem.value = #item.text || ''"></textarea>
