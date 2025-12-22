@@ -63,7 +63,6 @@
       .then(filterPreloaded => voices = currentLang ? filterVoicesByLanguage(allVoices, currentLang) : null)
       .then(preloadVoices => items.forEach(element => {
         element.voice = voices.find((voice) => voice.name == element.voice.name);
-        console.log(items);
       }))
       .catch(err => alert(err.message))
 
