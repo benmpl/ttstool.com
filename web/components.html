@@ -3,15 +3,15 @@
   <div class="row">
     <div class="col-6 col-md-4 col-lg-3 align-items-start" bind-repeater-i="#items.length" bind-var-item="#items[#i]">
       <div class="card">
-      <div class="py-2" style="flex: 1; cursor: pointer;" bind-event-click="$(#viewRoot).triggerHandler('play-item', #item)">
+      <div class="py-2 card-body" style="flex: 1; cursor: pointer;" bind-event-click="$(#viewRoot).triggerHandler('play-item', #item)">
         <span class="voice label" bind-statement-1="$(thisElem).toggle(#item.voice != null)">voice: {{#item.voice.name}}</span>
         <span class="volume label" bind-statement-1="$(thisElem).toggle(#item.volume != 1)">volume: {{#item.volume}}</span>
         <span class="rate label" bind-statement-1="$(thisElem).toggle(#item.rate != 0)">rate: {{Math.pow(5, #item.rate).toFixed(2)}}</span>
         <span class="pitch label" bind-statement-1="$(thisElem).toggle(#item.pitch != 1)">pitch: {{#item.pitch}}</span>
         <div>{{#item.text}}</div>
       </div>
-      <div>
-        <div class="ps-2 pe-3 py-2" style="cursor: pointer" data-bs-toggle="dropdown">⋮</div>
+      <div class="card-footer">
+        <div class="" style="cursor: pointer" data-bs-toggle="dropdown">⋮</div>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#" bind-event-click="alert('Click on the item to play it')">Play</a></li>
           <li><a class="dropdown-item" href="#" bind-event-click="$(#viewRoot).triggerHandler('edit-item', #item)">Edit</a></li>
@@ -21,9 +21,9 @@
       </div>
       </div>
     </div>
-    <div class="card col-6 col-md-4 col-lg-3 d-grid align-items-start justify-content-center">
-      <button type="button" class="btn"
-        bind-statement-1="toggleClass(thisElem, #darkMode, 'btn-dark', 'btn-outline-primary')"
+    <div class="card col-6 col-md-4 col-lg-3 align-items-start justify-content-center">
+      <button type="button" class="btn col-12" style="height: 100%;"
+        bind-statement-1="toggleClass(thisElem, #darkMode, 'btn-dark', '')"
         bind-event-click="$(#viewRoot).triggerHandler('add-item')">
         <i class="material-icons">add</i>
       </button>
